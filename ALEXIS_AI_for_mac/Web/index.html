@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ana Voice Assistant</title>
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at center, #0a1128 0%, #030712 100%);
+      --accent-color: #00f2fe;
+      --accent-glow: rgba(0, 242, 254, 0.5);
+      --core-purple: #7928ca;
+      --card-bg: rgba(13, 22, 41, 0.75);
+      --border-color: rgba(0, 242, 254, 0.25);
+      --text-main: #f1f5f9;
+      --text-muted: #64748b;
+    }
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+    }
+
+    /* Electric Animated Border Outer Wrapper */
+    body {
+      background: #030712;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px; /* Border thickness */
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Moving Electric Gradient Layer */
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        #00f2fe 15%,
+        #7928ca 30%,
+        transparent 45%,
+        #00f2fe 65%,
+        #3b82f6 80%,
+        transparent 100%
+      );
+      animation: electricRotate 4s linear infinite;
+      z-index: 0;
+    }
+
+    /* Outer Glow Aura for Neon Electric Feel */
+    body::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: 0 0 35px rgba(0, 242, 254, 0.6), inset 0 0 15px rgba(121, 40, 202, 0.5);
+      pointer-events: none;
+      z-index: 2;
+      border-radius: 20px;
+    }
+
+    @keyframes electricRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Main Container Shell */
+    .app-container { 
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-gradient); 
+      color: var(--text-main); 
+      display: flex; 
+      flex-direction: column; 
+      padding: 20px; 
+      border-radius: 16px;
+      overflow: hidden; 
+      backdrop-filter: blur(20px); 
+    }
+    
+    /* Header Styling */
+    .header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding-bottom: 12px; 
+      border-bottom: 1px solid var(--border-color); 
+      position: relative;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .title { 
+      font-size: 10px; 
+      font-weight: 700; 
+      color: #fff; 
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      color: #00ff88;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-dot { 
+      width: 6px; 
+      height: 6px; 
+      background: #00ff88; 
+      border-radius: 50%; 
+      box-shadow: 0 0 8px #00ff88; 
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .cmd-btn { 
+      background: rgba(0, 242, 254, 0.05); 
+      border: 1px solid var(--border-color); 
+      color: var(--accent-color); 
+      padding: 6px 14px; 
+      font-size: 11px; 
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 6px; 
+      cursor: pointer; 
+      transition: all 0.3s ease; 
+      backdrop-filter: blur(5px);
+    }
+
+    .cmd-btn:hover { 
+      background: var(--accent-color); 
+      color: #030712; 
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* Central Visualizer / Orb Section */
+    .ai-core-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0 10px 0;
+      position: relative;
+    }
+
+    .ai-orb {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-color) 0%, var(--core-purple) 70%, transparent 100%);
+      box-shadow: 0 0 30px var(--accent-glow), inset 0 0 15px #fff;
+      animation: floatOrb 4s ease-in-out infinite, rotateGlow 8s linear infinite;
+      position: relative;
+    }
+
+    .ai-orb::before {
+      content: '';
+      position: absolute;
+      top: -6px; left: -6px; right: -6px; bottom: -6px;
+      border-radius: 50%;
+      border: 1px stroke var(--accent-color);
+      border-top-color: transparent;
+      border-bottom-color: transparent;
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Commands Panel */
+    .commands-panel { 
+      display: none; 
+      background: var(--card-bg); 
+      border: 1px solid var(--border-color); 
+      border-radius: 12px; 
+      padding: 12px; 
+      margin: 10px 0; 
+      max-height: 180px; 
+      overflow-y: auto; 
+      font-size: 11px; 
+      backdrop-filter: blur(15px);
+      animation: slideDown 0.3s ease-out;
+      z-index: 20;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .commands-panel::-webkit-scrollbar { width: 4px; }
+    .commands-panel::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 4px; }
+    
+    .cmd-title { 
+      font-weight: 700; 
+      color: var(--accent-color); 
+      margin-bottom: 8px; 
+      font-size: 10px; 
+      text-transform: uppercase; 
+      letter-spacing: 1px;
+    }
+
+    .cmd-list { 
+      list-style: none; 
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 6px; 
+    }
+
+    .cmd-item { 
+      background: rgba(255, 255, 255, 0.02); 
+      padding: 6px 8px; 
+      border-radius: 6px; 
+      color: #94a3b8; 
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: 0.2s;
+    }
+
+    .cmd-item:hover {
+      background: rgba(0, 242, 254, 0.08);
+      border-color: var(--accent-color);
+      color: #fff;
+    }
+
+    .cmd-item span { color: var(--accent-color); }
+
+    /* Chat Messages Box */
+    .chat-box { 
+      flex: 1; 
+      overflow-y: auto; 
+      padding: 10px 4px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+    }
+
+    .chat-box::-webkit-scrollbar { width: 4px; }
+    .chat-box::-webkit-scrollbar-thumb { background: rgba(0, 242, 254, 0.2); border-radius: 10px; }
+    
+    .msg { 
+      max-width: 80%; 
+      padding: 10px 14px; 
+      border-radius: 12px; 
+      font-size: 12px; 
+      line-height: 1.5; 
+      animation: fadeIn 0.25s ease-out; 
+      word-wrap: break-word;
+    }
+
+    .msg.Ana { 
+      background: rgba(0, 242, 254, 0.05); 
+      border: 1px solid rgba(0, 242, 254, 0.2); 
+      color: #e0f7fa; 
+      align-self: flex-start; 
+      border-top-left-radius: 2px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .msg.user { 
+      background: linear-gradient(135deg, rgba(121, 40, 202, 0.4) 0%, rgba(0, 242, 254, 0.2) 100%); 
+      border: 1px solid rgba(255, 255, 255, 0.15); 
+      color: #ffffff; 
+      align-self: flex-end; 
+      border-top-right-radius: 2px;
+    }
+
+    .msg.system { 
+      background: rgba(255, 255, 255, 0.02); 
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted); 
+      font-size: 10px; 
+      align-self: center; 
+      border-radius: 12px;
+      padding: 3px 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(6px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="brand">
+        <div class="title">Ana AI</div>
+        <div class="status-badge">
+          <div class="status-dot"></div> Online
+        </div>
+      </div>
+      <button class="cmd-btn" onclick="toggleCommands()">⚡ COMMANDS</button>
+    </div>
+
+    <!-- AI Visualizer Orb -->
+    <div class="ai-core-container">
+      <div class="ai-orb"></div>
+    </div>
+
+    <!-- All Commands Help List Box -->
+    <div class="commands-panel" id="cmdPanel">
+      <div class="cmd-title">💡 Available Voice Commands:</div>
+      <ul class="cmd-list">
+        <li class="cmd-item">🗣️ <span>"What is your name" / "Who are you"</span></li>
+        <li class="cmd-item">⏰ <span>"time" / "Date" </span></li>
+        <li class="cmd-item">📰 <span>"headlines" / "news"</span></li>
+        <li class="cmd-item">🌤️ <span>"quit whatsapp" / "close whatsapp"</span></li>
+        <li class="cmd-item">🌤️ <span>"open whatsapp" / "whatsapp"</span></li>
+        <li class="cmd-item">🌤️ <span>"temperature" / "weather"</span></li>
+        <li class="cmd-item">🌐 <span>"Translate [text] to [language]"</span></li>
+        <li class="cmd-item">📝 <span>"Write a note" / "Take a note"</span></li>
+        <li class="cmd-item">📸 <span>"set a timer" / "remind me" </span></li>
+        <li class="cmd-item">📸 <span>"CPU" / "processor" / "cpu usage"</span></li>
+        <li class="cmd-item">🔋 <span>"battery" / "Check battery" / "Power status"</span></li>
+        <li class="cmd-item">🔊 <span>"Volume up" / "Volume down" / "Mute" / "Unmute" </span></li>
+        <li class="cmd-item">💻 <span>"Open [app name]"</span></li>
+        <li class="cmd-item">💻 <span>"Close [app name]"</span></li>
+        <li class="cmd-item">🔍 <span>"Search [your query]"</span></li>
+        <li class="cmd-item">🗺️ <span>"Where is [location]" / "Find Location" </span></li>
+        <li class="cmd-item">🎵 <span>"Play [song name]"</span></li>
+        <li class="cmd-item">📸 <span>"Take a screenshot" / "capture screen" </span></li>
+        <li class="cmd-item">🔒 <span>"Lock screen" / "lock system"</span></li>
+        <li class="cmd-item">🚀 <span>"Internet Speed" / "Speed Test" / "download speed"</span></li>
+        <li class="cmd-item">🚀 <span>"system info" / "system details" / "about system"</span></li>
+        <li class="cmd-item">🚀 <span>"RAM" / "Memory"</span></li>
+        <li class="cmd-item">🚀 <span>"Storage" / "Disk Storage" / "free space"</span></li>
+        <li class="cmd-item">❌ <span>"Exit" / "Quit" / "Goodbye"</span></li>
+        <li class="cmd-item">🚀 <span>"Open [websides name]"</span></li>
+        <li class="cmd-item">❌ <span>"Set Volume" / "Change Volume"</span></li>
+        <li class="cmd-item">🚀 <span>"Read Clipboard" / "What is copied"</span></li>
+      </ul>
+    </div>
+
+    <!-- Chat Log Box -->
+    <div class="chat-box" id="chat">
+      <div class="msg system">System Initialized • Ana v1.0 Ready</div>
+    </div>
+  </div>
+
+  <script src="/eel.js"></script>
+  <script>
+    const chat = document.getElementById('chat');
+    const cmdPanel = document.getElementById('cmdPanel');
+
+    function toggleCommands() {
+      cmdPanel.style.display = (cmdPanel.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Python se Live logs receive karna
+    eel.expose(add_log);
+    function add_log(text, type = 'system') {
+      const div = document.createElement('div');
+      div.className = `msg ${type}`;
+      div.innerText = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Window close function
+    eel.expose(close_window);
+    function close_window() {
+      window.close();
+    }
+  </script>
+</body>
+</html>
